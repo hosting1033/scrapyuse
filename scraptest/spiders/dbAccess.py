@@ -62,3 +62,5 @@ print(data)
 
 cursor.close()
 cnx.close()
+
+# new comment
