@@ -1,66 +1,58 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Feb  6 16:14:39 2018
+date_time = datetime.now()
 
-@author: Project
-"""
-from datetime import datetime
-import mysql.connector
-cnx = mysql.connector.connect(host="localhost", user="root", 
-                           passwd="321", db="test")
-cursor = cnx.cursor()
-
-timestamp = datetime.now()
-
-# Insert new row in mydrones
-add_mydrones = (
-    "INSERT INTO mydrones "
-    "(model, url, price, extracted) "
-    "VALUES (%(model)s, %(url)s, %(price)s, %(extracted)s)"
-    )
-
-data_mydrones = {
-        'model': "drone 00+",
-        'url': "amason.come",
-        'price': 25,
-        'extracted': timestamp
-         }            
-cursor.execute(add_mydrones, data_mydrones)
-
-#Receive unic_ID
+add_drone = ("""
+        INSERT INTO drone (model, brand, motion_type, manufacturer_info, 
+        kit_type, area, impl_field, level, age, created_at, updated_at) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """)
+data_drone = ('drone 001', 'mybrand', 'copter', 'something', 
+        'ready', 'both', 'joy', 'expert', 'adult', date_time, date_time
+        )
+cursor.execute(add_drone, data_drone)
 
 current_id = cursor.lastrowid
 
-# Insert new row in mydrones_text
-add_mydrones_text = (
-    "INSERT INTO mydrones_text "
-    "(topic, model_id) "
-    "VALUES (%(topic)s, %(model_id)s)"
-    )
+add_sale = ("""
+        INSERT INTO sale (price, provider_name, dron_full_name, descr, 
+        specification, shipping_info, customer_rating, number_of_reviews, 
+        number_of_questions, drone_article, url, drone_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """)
 
-data_mydrones_text = {
-        'topic': 'Article_00+',
-        'model_id': current_id
-        }
+data_sale = (
+        '350.02', 'amazon', 'Bazzz ooo', 'so en so...', 
+        'some more tech detailes', 'dimensions weight destination', 2, 567, 
+        300, 'xz', 'amazon.com', current_id
+        )
                      
-# Insert new row in mydrones_text
-cursor.execute(add_mydrones_text, data_mydrones_text)
+cursor.execute(add_sale, data_sale)
+
+current_id = cursor.lastrowid
+
+add_reviwe = ("""
+        INSERT INTO review (author_rate, title, text, author, 
+        number_of_comments, review_date, sale_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """)
+
+data_reviwe = (5, 'zzz', 'once upon a time', 'alexander', 
+               500, '2018-02-09 16:26:35', current_id
+               )
+                     
+cursor.execute(add_reviwe, data_reviwe)
 
 # Make sure data is committed to the database
 cnx.commit()
 
 # Last row output
 sql = ("""
-       SELECT * FROM MyDrones join mydrones_text 
-       on MyDrones_text.model_id = mydrones.unic_id
-       ORDER BY mydrones.unic_id DESC LIMIT 1
+       SELECT * FROM drone
+       ORDER BY drone.id DESC LIMIT 1
        """)
-    
+
 cursor.execute(sql)
 data = cursor.fetchall()
 print(data)
 
 cursor.close()
 cnx.close()
-
-# new comment
