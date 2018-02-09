@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Feb  6 16:14:39 2018
+
+@author: Project
+"""
+from datetime import datetime
+import mysql.connector
+cnx = mysql.connector.connect(host="localhost", user="root", 
+                           passwd="321", db="drones")
+cursor = cnx.cursor()
+
 date_time = datetime.now()
 
 add_drone = ("""
