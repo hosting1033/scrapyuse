@@ -10,45 +10,54 @@ cnx = mysql.connector.connect(host="localhost", user="root",
                            passwd="321", db="drones")
 cursor = cnx.cursor()
 
+#Write data to drone table
 date_time = datetime.now()
 
-unic_id = uuid.uuid4().hex
+d_id = str(uuid.uuid1())
 
 add_drone = ("""
-        INSERT INTO drone (model, brand, motion_type, manufacturer_info, 
-        kit_type, area, impl_field, level, age, created_at, updated_at, 
-        drone_id) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO drone (id, model, brand, info_by_manufacturer, motion_type, 
+        material, kit_type, area, impl_field, level, age, created_at, updated_at 
+        ) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """)
-data_drone = ('drone 00+', 'brand name', 'copter', 'manufacturer + country', 
-        'ready', 'both', 'joy', 'expert', 'adult', 
-        date_time, date_time, unic_id
+data_drone = (
+        d_id, 'drone 00+', 'manufacturer name', 'manufacturer country', 'quadcopter', 
+        'plastic', 'ready', 'indoor', 'joy', 'beginners', 'kids', 
+        date_time, date_time
         )
 cursor.execute(add_drone, data_drone)
 
+#Write data to sale table
+s_id = str(uuid.uuid1())
+
 add_sale = ("""
-        INSERT INTO sale (price, provider_name, dron_full_name, descr, 
-        specification, shipping_info, customer_rating, number_of_reviews, 
-        number_of_questions, drone_article, url, sale_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO sale (id, price, provider_name, dron_full_name, descr, 
+        spec, shipping_info, customer_rating, number_of_reviews, 
+        number_of_questions, id_by_provider, url, drone_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """)
 
 data_sale = (
-        '350.02', 'amazon', 'Bazzz ooo', 'it flies and makes video', 
+        s_id, 350.02, 'amazon', 'Bazzz ooo', 'it flies and makes video', 
         'tech detailes', 'dimensions weight sale abroad', 5, 600, 
-        300, 'Amazon_ID', 'amazon.com', unic_id
+        300, 'B071LQGXXF', 'amazon.com', d_id
         )
                      
 cursor.execute(add_sale, data_sale)
 
+#Write data to review table
+r_id = str(uuid.uuid1())
+
 add_review = ("""
-        INSERT INTO review (author_rate, title, text, author, 
-        number_of_comments, review_date, review_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO review (id, rate_by_author, headline, content, 
+        author, number_of_comments, date_of_review, sale_id, drone_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """)
 
-data_review = (5, 'title text', 'text of review', 'alexander', 
-        5, '2018-02-09 16:26:35', unic_id
+data_review = (
+        r_id, 5, 'title text', 'text of review', 'alexander', 
+        5, '2018-02-09 16:26:35', s_id, d_id
         )
                      
 cursor.execute(add_review, data_review)
@@ -59,8 +68,8 @@ cnx.commit()
 # Last row output
 sql = ("""
        SELECT * FROM drone join sale join review
-       on  drone.drone_id = sale.sale_id
-       where drone.drone_id = review.review_id
+       on  drone.id = sale.drone_id
+       where drone.id = review.drone_id
        ORDER BY drone.updated_at DESC LIMIT 1
        """)
 

@@ -25,22 +25,21 @@ DROP TABLE IF EXISTS `drone`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `drone` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(45) NOT NULL,
   `model` varchar(250) DEFAULT NULL,
   `brand` varchar(45) DEFAULT NULL,
-  `motion_type` enum('copter','plane','track') DEFAULT NULL,
-  `manufacturer_info` mediumtext,
-  `kit_type` enum('ready','constructor','parts') DEFAULT NULL,
+  `info_by_manufacturer` mediumtext,
+  `motion_type` enum('quadcopter','plane','helycopter','car','boat') DEFAULT NULL,
+  `material` enum('plastic','carbon_fiber','fiberglass','foam','metal','wood') DEFAULT NULL,
+  `kit_type` enum('ready','almost_ready','to_be_bind','plug_and_play','constructor','parts') DEFAULT NULL,
   `area` enum('indoor','outdoor','both') DEFAULT NULL,
   `impl_field` enum('joy','work') DEFAULT NULL,
   `level` enum('beginners','intermediate','expert') DEFAULT NULL,
   `age` enum('kids','adult') DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `drone_id` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `index2` (`drone_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -51,18 +50,21 @@ DROP TABLE IF EXISTS `review`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `review` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `author_rate` decimal(10,0) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `text` longtext,
+  `id` varchar(45) NOT NULL,
+  `rate_by_author` decimal(10,0) DEFAULT NULL,
+  `headline` varchar(255) DEFAULT NULL,
+  `content` longtext,
   `author` varchar(45) DEFAULT NULL,
   `number_of_comments` int(11) DEFAULT NULL,
-  `review_date` datetime DEFAULT NULL,
-  `review_id` varchar(45) DEFAULT NULL,
+  `date_of_review` datetime DEFAULT NULL,
+  `sale_id` varchar(45) DEFAULT NULL,
+  `drone_id` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_text_sale_idx` (`review_id`),
-  CONSTRAINT `fk_review_sale` FOREIGN KEY (`review_id`) REFERENCES `sale` (`sale_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  KEY `fk_rd_idx` (`drone_id`),
+  KEY `fk_rs_idx` (`sale_id`),
+  CONSTRAINT `fk_rd` FOREIGN KEY (`drone_id`) REFERENCES `drone` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_rs` FOREIGN KEY (`sale_id`) REFERENCES `sale` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,23 +75,23 @@ DROP TABLE IF EXISTS `sale`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sale` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(45) NOT NULL,
   `price` decimal(10,0) DEFAULT NULL,
   `provider_name` varchar(45) DEFAULT NULL,
   `dron_full_name` varchar(500) DEFAULT NULL,
   `descr` mediumtext,
-  `specification` mediumtext,
+  `spec` mediumtext,
   `shipping_info` tinytext,
   `customer_rating` decimal(10,0) DEFAULT NULL,
   `number_of_reviews` int(11) DEFAULT NULL,
   `number_of_questions` int(11) DEFAULT NULL,
-  `drone_article` varchar(45) DEFAULT NULL,
+  `id_by_provider` varchar(45) DEFAULT NULL,
   `url` varchar(1000) DEFAULT NULL,
-  `sale_id` varchar(45) DEFAULT NULL,
+  `drone_id` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_sd_idx` (`sale_id`),
-  CONSTRAINT `fk_sale_drone` FOREIGN KEY (`sale_id`) REFERENCES `drone` (`drone_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  KEY `fk_sd_idx` (`drone_id`),
+  CONSTRAINT `fk_sd` FOREIGN KEY (`drone_id`) REFERENCES `drone` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,4 +111,4 @@ CREATE TABLE `sale` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-11  3:55:04
+-- Dump completed on 2018-02-14  3:12:44
